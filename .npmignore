@@ -1,0 +1,8 @@
+/src
+/example.*
+/.eslintrc.*
+/.eslintignore
+/.prettierrc
+/.node-version
+/tsconfig.json
+README.md
