@@ -1,7 +1,7 @@
 {
   "name": "@ztrehagem/trip",
   "version": "0.0.1",
-  "description": "A reactive-oriented tiny date library",
+  "description": "",
   "author": {
     "email": "shigeki.suwa@ztrehagem.dev",
     "name": "Shigeki Suwa",
@@ -31,10 +31,10 @@
   "types": "dist/index.d.ts",
   "main": "dist/index.js",
   "scripts": {
-    "start": "tsc example.ts --module commonjs --target ES2017 && node ./example.js",
+    "start": "tsc example.ts --module commonjs --target ES2017 && node ./example",
     "build": "tsc",
     "watch": "tsc -w",
-    "lint": "eslint src/**/* --fix",
+    "lint": "eslint src/**/*.ts --fix",
     "lint:nofix": "eslint src/**/*.ts",
     "clean": "rm -r dist || true",
     "prepare": "npm run lint:nofix && npm run clean && npm run build"
