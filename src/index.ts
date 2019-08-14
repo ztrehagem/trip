@@ -1,4 +1,4 @@
-export abstract class Trip<P, Q, B> {
+export abstract class Trip<P, Q, B, V = void> {
   isSubmitting = false
   isSubmitted = false
   protected params?: P
@@ -17,17 +17,20 @@ export abstract class Trip<P, Q, B> {
     this.body = body
   }
 
-  protected abstract exec(params?: P, query?: Q, body?: B): Promise<void>
+  protected abstract validator(params?: P, query?: Q, body?: B): V
+  protected abstract executor(params?: P, query?: Q, body?: B): Promise<void>
 
-  async call() {
+  validate() {
+    return this.validator(this.params, this.query, this.body)
+  }
+
+  async execute() {
     try {
       this.isSubmitting = true
-      await this.exec(this.params, this.query, this.body)
+      await this.executor(this.params, this.query, this.body)
     } finally {
       this.isSubmitting = false
       this.isSubmitted = true
     }
   }
 }
-
-export class TripError extends Error {}

@@ -12,16 +12,16 @@ interface StatusedResponse<S extends number, R> extends ApiResponse<R> {
 function api(config: unknown) {
   return new Promise<
     | StatusedResponse<200, User>
-    | StatusedResponse<400, Invalid>
+    | StatusedResponse<400, ValidationErrors>
     | StatusedResponse<500, null>
   >((res) => {
-    console.log('called', config)
+    console.log('* called:', config)
     switch (Math.floor(Math.random() * 3)) {
       case 0:
         res({ status: 200, data: { name: 'myname' } })
         break
       case 1:
-        res({ status: 400, data: { name: ['invalid!'] } })
+        res({ status: 400, data: { name: ['ValidationErrors!'] } })
         break
       default:
         res({ status: 500, data: null })
@@ -29,7 +29,7 @@ function api(config: unknown) {
   })
 }
 
-interface FooTripParams {
+interface UserParams {
   id: number
 }
 
@@ -37,15 +37,46 @@ interface User {
   name: string
 }
 
-interface Invalid {
-  [key: string]: string[]
+type ValidationErrors<K extends string = string> = Record<K, string[]>
+
+class ValidationErrorBuilder {
+  protected errors: ValidationErrors = {}
+
+  add(key: string, message: string) {
+    this.errors[key] = this.errors[key] || []
+    this.errors[key].push(message)
+  }
+
+  build() {
+    return this.errors
+  }
 }
 
-class FooTrip extends Trip<FooTripParams, never, User> {
+class FooTrip extends Trip<UserParams, never, User> {
   user: { name: string } | null = null
-  invalid: Invalid | null = null
+  validationErrors: ValidationErrors = {}
 
-  protected async exec(params?: FooTripParams, query?: never, body?: User) {
+  get hasValidationErrors() {
+    return Object.keys(this.validationErrors).length > 0
+  }
+
+  validator(params?: UserParams, query?: never, body?: User) {
+    const builder = new ValidationErrorBuilder()
+
+    if (!params || !body) return
+
+    if (params.id < 1) {
+      builder.add('id', 'id error')
+    }
+
+    if (body.name.length < 1) {
+      builder.add('name', 'name error')
+    }
+
+    this.validationErrors = builder.build()
+  }
+
+  protected async executor(params?: UserParams, query?: never, body?: User) {
     if (!params || !body) {
       throw null
     }
@@ -55,10 +86,10 @@ class FooTrip extends Trip<FooTripParams, never, User> {
     switch (res.status) {
       case 200:
         this.user = res.data
-        this.invalid = null
+        this.validationErrors = {}
         break
       case 400:
-        this.invalid = res.data
+        this.validationErrors = res.data
         break
       default:
         throw res
@@ -70,15 +101,28 @@ class FooTrip extends Trip<FooTripParams, never, User> {
   const t = new FooTrip()
 
   for (const i of [...Array(10).keys()]) {
+    console.log(`(${i}) ---------------------`)
     t.setParams({ id: i })
     t.setBody({ name: `myname:${i}` })
 
+    t.validate()
+
+    console.log(t.isSubmitted)
+
+    if (t.hasValidationErrors) {
+      console.log('* before validation error', t.validationErrors)
+      continue
+    }
+
     try {
-      console.log(t.isSubmitted, '--------------')
-      await t.call()
-      console.log(t.user, t.invalid)
+      await t.execute()
+      if (t.hasValidationErrors) {
+        console.log('* after validation error:', t.validationErrors)
+      } else {
+        console.log('* success:', t.user)
+      }
     } catch (error) {
-      console.log('error:', error)
+      console.log('* api error:', error)
     }
   }
 })()
