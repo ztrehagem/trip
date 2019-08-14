@@ -1,4 +1,4 @@
-import { Trip } from './'
+import { Trip } from '../'
 
 interface ApiResponse<T> {
   status: number
@@ -9,7 +9,7 @@ interface StatusedResponse<S extends number, R> extends ApiResponse<R> {
   status: S
 }
 
-function api(config) {
+function api(config: any) {
   return new Promise<
     | StatusedResponse<200, User>
     | StatusedResponse<400, Invalid>

@@ -1,4 +1,4 @@
 node_modules
 /dist
 /.tmp
-/example.js
+/example/**/*.js
