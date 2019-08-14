@@ -1,7 +1,7 @@
 {
   "name": "@ztrehagem/trip",
   "version": "0.0.1",
-  "description": "",
+  "description": "A tiny framework for HTTP requesting.",
   "author": {
     "email": "shigeki.suwa@ztrehagem.dev",
     "name": "Shigeki Suwa",
