@@ -34,8 +34,8 @@
     "start": "tsc -p example && node ./example",
     "build": "tsc",
     "watch": "tsc -w",
-    "lint": "eslint src/**/*.ts --fix",
-    "lint:nofix": "eslint src/**/*.ts",
+    "lint": "eslint --fix src/**/*.ts example/**/*.ts",
+    "lint:nofix": "eslint src/**/*.ts example/**/*.ts",
     "clean": "rm -r dist || true",
     "prepare": "npm run lint:nofix && npm run clean && npm run build"
   },

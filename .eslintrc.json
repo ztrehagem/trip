@@ -10,7 +10,7 @@
   ],
   "parser": "@typescript-eslint/parser",
   "env": {
-    "browser": false,
+    "browser": true,
     "node": false,
     "es6": true
   },
@@ -23,6 +23,9 @@
     "@typescript-eslint/no-unused-vars": "error",
     "@typescript-eslint/explicit-member-accessibility": ["error", {
       "accessibility": "no-public"
+    }],
+    "@typescript-eslint/no-explicit-any": ["error", {
+      "fixToUnknown": true
     }]
   },
   "overrides": [{

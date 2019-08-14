@@ -9,7 +9,7 @@ interface StatusedResponse<S extends number, R> extends ApiResponse<R> {
   status: S
 }
 
-function api(config: any) {
+function api(config: unknown) {
   return new Promise<
     | StatusedResponse<200, User>
     | StatusedResponse<400, Invalid>
